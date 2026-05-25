@@ -1,107 +1,69 @@
 <!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Graficador de Funciones</title>
-  <link rel="stylesheet" href="./style/grapher.css">
-</head>
-<body>
-  <div class="app">
+<html class="no-js" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graficador de Funciones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style/index.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Graficación</a>
+        <div class="navbar-nav ms-auto">
+          <a class="nav-link text-white" href="index.html">Ejercicio 1</a>
+        </div>
+      </div>
+    </nav>
 
-    <!-- Panel lateral de controles -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="logo">f(x)</span>
-        <h1>Graficador</h1>
-        <p class="subtitle">Graficación – TypeScript</p>
+    <div class="card text-center mt-3 mx-auto" style="max-width: 700px;">
+      <div class="card-header">
+        Graficador de Funciones
       </div>
 
-      <!-- Entrada de función -->
-      <section class="control-group">
-        <label class="control-label" for="funcInput">Función</label>
-        <div class="input-row">
-          <span class="input-prefix">f(x) =</span>
-          <input id="funcInput" type="text" class="func-input"
-                 value="sin(x)" placeholder="Ej: sin(x), x*x" autocomplete="off" spellcheck="false">
+      <div class="card-body">
+        <!-- Selección de función -->
+        <p class="mb-2"><strong>Selecciona una función:</strong></p>
+        <div class="btn-group mb-3" role="group">
+          <button id="btnSin"  class="btn btn-outline-primary">sin(x)</button>
+          <button id="btnCos"  class="btn btn-outline-primary">cos(x)</button>
+          <button id="btnLin"  class="btn btn-outline-primary">x</button>
+          <button id="btnCuad" class="btn btn-outline-primary">x²</button>
+          <button id="btnCub"  class="btn btn-outline-primary">x³</button>
         </div>
-        <div id="errorMsg" class="error-msg" style="display:none">
-          ⚠ Expresión inválida. Usa sintaxis JS: <code>sin(x)</code>, <code>x*x</code>
+
+        <!-- Canvas -->
+        <canvas id="graphCanvas" width="640" height="480" class="border"></canvas>
+
+        <!-- Zoom -->
+        <div class="mt-3">
+          <strong>Zoom:</strong>
+          <button id="btnZoomIn"  class="btn btn-sm btn-secondary ms-2">+ Acercar</button>
+          <button id="btnZoomOut" class="btn btn-sm btn-secondary ms-1">− Alejar</button>
+          <button id="btnReset"   class="btn btn-sm btn-outline-secondary ms-1">Restablecer</button>
         </div>
-      </section>
-
-      <!-- Color de la función -->
-      <section class="control-group">
-        <label class="control-label" for="funcColor">Color</label>
-        <div class="color-row">
-          <input id="funcColor" type="color" value="#f87171" class="color-picker">
-          <span class="color-hint">Color de la curva</span>
-        </div>
-      </section>
-
-      <!-- Funciones predefinidas -->
-      <section class="control-group">
-        <label class="control-label" for="presets">Presets</label>
-        <select id="presets" class="preset-select">
-          <option value="">— Seleccionar función —</option>
-          <optgroup label="Trigonométricas">
-            <option value="sin(x)">sin(x)</option>
-            <option value="cos(x)">cos(x)</option>
-            <option value="tan(x)">tan(x)</option>
-            <option value="sin(x) + cos(2*x)">sin(x) + cos(2x)</option>
-          </optgroup>
-          <optgroup label="Polinomiales">
-            <option value="x">x (lineal)</option>
-            <option value="x*x">x²</option>
-            <option value="x*x*x">x³</option>
-            <option value="x*x - 2">x² - 2</option>
-            <option value="x*x*x - 3*x">x³ - 3x</option>
-          </optgroup>
-          <optgroup label="Otras">
-            <option value="sqrt(abs(x))">√|x|</option>
-            <option value="log(abs(x))">ln|x|</option>
-            <option value="1/x">1/x</option>
-            <option value="exp(-x*x)">e^(-x²)</option>
-            <option value="sin(x)/x">sin(x)/x</option>
-          </optgroup>
-        </select>
-      </section>
-
-      <!-- Botón principal -->
-      <button id="btnPlot" class="btn btn-primary">▶ Graficar</button>
-
-      <!-- Controles de zoom -->
-      <section class="control-group">
-        <label class="control-label">Zoom</label>
-        <div class="zoom-row">
-          <button id="btnZoomIn"  class="btn btn-zoom" title="Acercar">+</button>
-          <span id="zoomLabel" class="zoom-label">1.00x</span>
-          <button id="btnZoomOut" class="btn btn-zoom" title="Alejar">−</button>
-        </div>
-        <button id="btnReset" class="btn btn-secondary">↺ Restablecer vista</button>
-        <p class="hint">También puedes usar la rueda del mouse sobre el canvas.</p>
-      </section>
-
-      <!-- Referencia -->
-      <section class="control-group reference">
-        <label class="control-label">Referencia</label>
-        <code class="ref-code">sin cos tan sqrt log exp abs pow PI E</code>
-        <p class="hint">Usa estas funciones directamente sin prefijo <em>Math.</em></p>
-      </section>
-
-      <div class="sidebar-footer">
-        <a href="index.html">← Ejercicio 1</a>
-        <a href="https://github.com/GerardoMHDZ07/graphics" target="_blank">GitHub ↗</a>
       </div>
-    </aside>
 
-    <!-- Canvas principal -->
-    <main class="canvas-area">
-      <canvas id="graphCanvas" width="820" height="580"></canvas>
-    </main>
+      <div class="card-footer text-muted">
+        Graficación — TypeScript + Canvas API
+      </div>
+    </div>
 
-  </div>
+    <footer id="footer" class="pb-4 pt-4 mt-4">
+      <div class="container">
+        <div class="row text-center">
+          <div class="col">
+            <a href="https://github.com/GerardoMHDZ07/graphics">Repositorio</a>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-  <script src="./dist/src/grapherIndex.js" type="module"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
+    <script src="./dist/src/grapherIndex.js" type="module"></script>
+  </body>
 </html>

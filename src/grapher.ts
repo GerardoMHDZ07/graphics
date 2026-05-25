@@ -2,131 +2,70 @@ import { CanvasLocal } from './canvasLocal.js';
 
 export class Grapher extends CanvasLocal {
 
-  private zoomFactor: number;
-
   constructor(g: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     super(g, canvas);
-    this.zoomFactor = 1;
   }
 
-  // Actualiza el zoom recalculando pixelSize
+  // Zoom: cambia el rango y recalcula pixelSize
   setZoom(factor: number): void {
-    this.zoomFactor = factor;
     this.rWidth  = 6 * factor;
     this.rHeight = 4 * factor;
     this.pixelSize = Math.max(this.rWidth / this.maxX, this.rHeight / this.maxY);
   }
 
-  getZoom(): number { return this.zoomFactor; }
-
-  clear(): void {
-    this.graphics.clearRect(0, 0, this.maxX + 1, this.maxY + 1);
-  }
-
-  // Dibuja la cuadricula
-  drawGrid(): void {
-    this.graphics.strokeStyle = 'rgba(180,180,200,0.35)';
-    this.graphics.lineWidth = 0.8;
-
-    const xRange = Math.ceil(this.rWidth / 2);
-    for (let x = -xRange; x <= xRange; x++) {
-      this.drawLine(this.iX(x), 0, this.iX(x), this.maxY);
-    }
-    const yRange = Math.ceil(this.rHeight / 2);
-    for (let y = -yRange; y <= yRange; y++) {
-      this.drawLine(0, this.iY(y), this.maxX, this.iY(y));
-    }
-  }
-
-  // Dibuja los ejes X e Y con marcas y etiquetas
+  // Dibuja los ejes con marcas y etiquetas
   drawAxes(): void {
-    // Ejes principales
-    this.graphics.strokeStyle = '#c8d0e0';
-    this.graphics.lineWidth = 1.8;
-    this.drawLine(0, this.iY(0), this.maxX, this.iY(0));
-    this.drawLine(this.iX(0), 0, this.iX(0), this.maxY);
+    this.graphics.strokeStyle = 'black';
+    this.graphics.lineWidth = 1;
+
+    // Eje X
+    this.drawLine(this.iX(-3), this.iY(0), this.iX(3), this.iY(0));
+    // Eje Y
+    this.drawLine(this.iX(0), this.iY(2), this.iX(0), this.iY(-2));
 
     // Marcas y numeros en X
-    this.graphics.font = '11px monospace';
-    this.graphics.fillStyle = '#aab0c0';
-    const xRange = Math.ceil(this.rWidth / 2);
-    for (let x = -xRange; x <= xRange; x++) {
-      if (x === 0) continue;
-      this.graphics.lineWidth = 1;
-      this.graphics.strokeStyle = '#c8d0e0';
-      this.drawLine(this.iX(x), this.iY(0) - 5, this.iX(x), this.iY(0) + 5);
-      this.graphics.fillText(
-        Number.isInteger(x) ? x.toFixed(0) : x.toFixed(1),
-        this.iX(x) - 6, this.iY(0) + 18
-      );
+    for (let x = -3; x <= 3; x++) {
+      this.drawLine(this.iX(x), this.iY(-0.1), this.iX(x), this.iY(0.1));
+      this.graphics.strokeText(x + '', this.iX(x) - 4, this.iY(-0.3));
+    }
+    // Marcas en Y
+    for (let y = -2; y <= 2; y++) {
+      this.drawLine(this.iX(-0.1), this.iY(y), this.iX(0.1), this.iY(y));
     }
 
-    // Marcas y numeros en Y
-    const yRange = Math.ceil(this.rHeight / 2);
-    for (let y = -yRange; y <= yRange; y++) {
-      if (y === 0) continue;
-      this.graphics.lineWidth = 1;
-      this.graphics.strokeStyle = '#c8d0e0';
-      this.drawLine(this.iX(0) - 5, this.iY(y), this.iX(0) + 5, this.iY(y));
-      this.graphics.fillText(
-        Number.isInteger(y) ? y.toFixed(0) : y.toFixed(1),
-        this.iX(0) + 8, this.iY(y) + 4
-      );
-    }
-
-    // Flechas y etiquetas de ejes
-    this.graphics.fillStyle = '#8890a8';
-    this.graphics.font = 'bold 13px monospace';
-    this.graphics.fillText('x', this.maxX - 14, this.iY(0) - 8);
-    this.graphics.fillText('y', this.iX(0) + 8, 14);
+    // Etiquetas de ejes
+    this.graphics.strokeText('X', this.iX(2.9), this.iY(0.2));
+    this.graphics.strokeText('Y', this.iX(0.15), this.iY(1.9));
   }
 
-  // Grafica una expresion matematica
-  // Usa las constantes de Math disponibles sin prefijo
-  plotFunction(expr: string, color: string = '#f87171'): void {
-    let fn: (x: number) => number;
-    try {
-      fn = new Function('x',
-        `const {sin,cos,tan,asin,acos,atan,atan2,sinh,cosh,tanh,
-                sqrt,cbrt,abs,log,log2,log10,exp,pow,sign,floor,ceil,round,
-                PI,E,LN2,LN10,SQRT2} = Math;
-         return ${expr};`
-      ) as (x: number) => number;
-    } catch {
-      throw new Error('Sintaxis invalida');
-    }
-
-    this.graphics.strokeStyle = color;
-    this.graphics.lineWidth = 2.2;
-    this.graphics.beginPath();
-
-    const xStart = -this.rWidth / 2;
-    const xEnd   =  this.rWidth / 2;
-    const step   = this.rWidth / (this.maxX * 1.5);
-    let started  = false;
-
-    for (let x = xStart; x <= xEnd; x += step) {
-      let y: number;
-      try { y = fn(x); } catch { started = false; continue; }
-
-      if (!isFinite(y) || isNaN(y)) { started = false; continue; }
-
-      // Clamp verticalmente para no dibujar fuera del canvas
-      const py = Math.max(-10, Math.min(this.maxY + 10, this.iY(y)));
-      const px = this.iX(x);
-
-      if (!started) { this.graphics.moveTo(px, py); started = true; }
-      else          { this.graphics.lineTo(px, py); }
-    }
-    this.graphics.stroke();
+  // La funcion matematica segun el tipo seleccionado
+  fx(x: number, tipo: string): number {
+    if (tipo === 'sin')  return Math.sin(x);
+    if (tipo === 'cos')  return Math.cos(x);
+    if (tipo === 'cuad') return x * x;
+    if (tipo === 'cub')  return x * x * x;
+    if (tipo === 'lin')  return x;
+    return 0;
   }
 
-  // Dibuja fondo + cuadricula + ejes
-  paint(): void {
-    // Fondo oscuro
-    this.graphics.fillStyle = '#12131f';
-    this.graphics.fillRect(0, 0, this.maxX + 1, this.maxY + 1);
-    this.drawGrid();
+  // Traza la funcion en rojo
+  plotFunction(tipo: string): void {
+    this.graphics.strokeStyle = 'red';
+    this.graphics.lineWidth = 2;
+    const paso = 0.05;
+    for (let x = -3; x <= 3 - paso; x += paso) {
+      const y1 = this.fx(x, tipo);
+      const y2 = this.fx(x + paso, tipo);
+      if (isFinite(y1) && isFinite(y2)) {
+        this.drawLine(this.iX(x), this.iY(y1), this.iX(x + paso), this.iY(y2));
+      }
+    }
+  }
+
+  // Dibuja todo: limpia, ejes y funcion
+  draw(tipo: string): void {
+    this.graphics.clearRect(0, 0, this.maxX + 1, this.maxY + 1);
     this.drawAxes();
+    this.plotFunction(tipo);
   }
 }
