@@ -1,0 +1,298 @@
+/* ====================================================
+   Graficador de Funciones – Estilos
+   ==================================================== */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0e0f1a;
+  --sidebar:   #13141f;
+  --surface:   #1a1b2e;
+  --border:    rgba(255,255,255,0.08);
+  --accent:    #7c6aff;
+  --accent2:   #f87171;
+  --text:      #dde1f0;
+  --muted:     #6b7291;
+  --radius:    10px;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---- Layout ---- */
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 1.25rem 1rem;
+  gap: 0;
+}
+
+.sidebar-header {
+  text-align: center;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.1rem;
+}
+
+.logo {
+  display: inline-block;
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sidebar-header h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 0.2rem;
+}
+
+.subtitle {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+}
+
+/* ---- Grupos de control ---- */
+.control-group {
+  margin-bottom: 1.1rem;
+}
+
+.control-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+/* ---- Input de función ---- */
+.input-row {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.input-row:focus-within {
+  border-color: var(--accent);
+}
+
+.input-prefix {
+  padding: 0 0.6rem;
+  font-size: 0.82rem;
+  color: var(--accent);
+  font-family: monospace;
+  white-space: nowrap;
+  border-right: 1px solid var(--border);
+  background: rgba(124,106,255,0.1);
+}
+
+.func-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: monospace;
+  font-size: 0.9rem;
+  padding: 0.55rem 0.6rem;
+}
+
+.error-msg {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #fca5a5;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.3);
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+}
+
+.error-msg code {
+  color: #f87171;
+  background: rgba(248,113,113,0.15);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+/* ---- Color picker ---- */
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.color-picker {
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  padding: 2px;
+}
+
+.color-hint {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* ---- Presets ---- */
+.preset-select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.83rem;
+  padding: 0.5rem 0.6rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.preset-select:focus { border-color: var(--accent); }
+.preset-select option, .preset-select optgroup {
+  background: #1a1b2e;
+}
+
+/* ---- Botones ---- */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  width: 100%;
+  padding: 0.7rem;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  color: #fff;
+  margin-bottom: 1.1rem;
+  font-size: 0.9rem;
+}
+.btn-primary:hover { opacity: 0.88; }
+
+/* ---- Zoom ---- */
+.zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.btn-zoom {
+  width: 36px;
+  height: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.2rem;
+  line-height: 1;
+  border-radius: 8px;
+}
+.btn-zoom:hover { border-color: var(--accent); color: var(--accent); }
+
+.zoom-label {
+  flex: 1;
+  text-align: center;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 0;
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.btn-secondary:hover { color: var(--text); border-color: #555; }
+
+.hint {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 0.3rem;
+}
+
+/* ---- Referencia ---- */
+.reference { border-top: 1px solid var(--border); padding-top: 1rem; }
+.ref-code {
+  display: block;
+  font-size: 0.72rem;
+  color: #a78bfa;
+  background: rgba(124,106,255,0.1);
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  word-break: break-all;
+  margin-bottom: 0.4rem;
+}
+
+/* ---- Footer del sidebar ---- */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+.sidebar-footer a {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.sidebar-footer a:hover { color: var(--accent); }
+
+/* ---- Canvas area ---- */
+.canvas-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 1rem;
+}
+
+canvas {
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 0 60px rgba(124, 106, 255, 0.15);
+  max-width: 100%;
+  cursor: crosshair;
+}
