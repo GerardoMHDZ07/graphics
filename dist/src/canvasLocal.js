@@ -9,9 +9,14 @@ export class CanvasLocal {
         this.centerX = this.maxX / 2;
         this.centerY = this.maxY / 2;
     }
-    /*iX(x: number):number{return Math.round(this.centerX + x/this.pixelSize);}
-    iY(y: number): number{ return Math.round(this.centerY - y / this.pixelSize); }
-    */
+    // Convierte coordenadas lógicas a coordenadas de pantalla
+    iX(x) {
+        return Math.round(this.centerX + x / this.pixelSize);
+    }
+    iY(y) {
+        return Math.round(this.centerY - y / this.pixelSize);
+    }
+    // Dibuja una línea entre dos puntos en coordenadas de pantalla
     drawLine(x1, y1, x2, y2) {
         this.graphics.beginPath();
         this.graphics.moveTo(x1, y1);
@@ -19,103 +24,75 @@ export class CanvasLocal {
         this.graphics.closePath();
         this.graphics.stroke();
     }
-    /*fx(x:number):number {
-      return Math.sin(x*2.5);
-    }*/
-    paint() {
-        this.drawLine(100.5, 100, 500, 100.5);
-        this.drawLine(500, 100, 300, 400);
-        this.drawLine(300, 400, 100, 100);
-        /* this.drawLine(this.iX(-3), this.iY(0), this.iX(3), this.iY(0));
-         this.drawLine(this.iX(0), this.iY(2), this.iX(0), this.iY(-2));
-     
-     
-         //dibuja la cuadricula
-         /*this.graphics.strokeStyle = 'lightgray';
-         for (let x = -3; x <= 3; x+=0.25){
-           this.drawLine(this.iX(x), this.iY(-2), this.iX(x), this.iY(2));
-         }
-         for (let y = -2; y <= 2; y+=0.25){
-           this.drawLine(this.iX(-3), this.iY(y), this.iX(3), this.iY(y));
-         }
-         //dibuja las divisiones
-         this.graphics.strokeStyle = 'black';
-         for (let x = -3; x <= 3; x++){
-           this.drawLine(this.iX(x), this.iY(-0.1), this.iX(x), this.iY(0.1));
-           this.graphics.strokeText(x+"", this.iX(x-0.1), this.iY(-0.2));
-         }
-         for (let y = -2; y <= 2; y++){
-           this.drawLine(this.iX(-0.1), this.iY(y), this.iX(0.1), this.iY(y));
-         }
-         this.graphics.strokeText("X", this.iX(2.9), this.iY(0.2));
-         this.graphics.strokeText("Y", this.iX(-0.2), this.iY(1.8));
-         //dibujar la funcion
-         this.graphics.strokeStyle = 'red';
-         let paso: number = 0.1;
-         for (let x = -3; x <= 3; x+=paso){
-           this.drawLine(this.iX(x), this.iY(this.fx(x)), this.iX(x+paso), this.iY(this.fx(x+paso)));
-         }
-         /*this.graphics.strokeStyle = 'red';
-         this.drawLine(this.iX(0), this.iY(0), this.iX(2), this.iY(0));
-         this.drawLine(this.iX(2), this.iY(0), this.iX(1), this.iY(1.5));
-         this.drawLine(this.iX(1), this.iY(1.5), this.iX(0), this.iY(0));*/
-        //this.drawLine(320, 40, 480, 400);
-        //this.drawLine(320, 40, 140, 400);
-        //this.drawLine(140, 400, 480, 400);
-        /*let lado = 1;
-        let side = 0.95 * lado;
-        let sideHalf = 0.5 * side;
-        let xCenter = 320;
-        let yCenter = 240;
-          
-        let h = sideHalf * Math.sqrt(3);
-        let xA, yA, xB, yB, xC, yC,
-        xA1, yA1, xB1, yB1, xC1, yC1, p, q;
-         q = 0.05;
-        p = 1 - q;
-        /*xA = xCenter - sideHalf;
-        yA = yCenter - 0.5 * h;
-        xB = xCenter + sideHalf;
-        yB = yA;
-        xC = xCenter;
-        yC = yCenter + 0.5 * h; *
-    
-        for (let m = 0; m < 4; m++){
-          for (let n = 0; n < 4; n++){
-            xA = 1+n*lado - sideHalf;
-            yA = 1+m*lado - 0.5 * h;
-            xB = 1+n*lado+ sideHalf;
-            yB = yA;
-            xC = 1+n*lado;
-            yC = 1+m*lado + 0.5 * h;
-            for (let i = 0; i < 20; i++){
-              this.drawLine(this.iX(xA), this.iY(yA), this.iX(xB), this.iY(yB));
-              this.drawLine(this.iX(xB), this.iY(yB), this.iX(xC), this.iY(yC));
-              this.drawLine(this.iX(xC), this.iY(yC), this.iX(xA), this.iY(yA));
-              xA1 = p * xA + q * xB;
-              yA1 = p * yA + q * yB;
-              xB1 = p * xB + q * xC;
-              yB1 = p * yB + q * yC;
-              xC1 = p * xC + q * xA;
-              yC1 = p * yC + q * yA;
-              xA = xA1; xB = xB1; xC = xC1;
-              yA = yA1; yB = yB1; yC = yC1;
-            }
-          }
+    /**
+     * Dibuja cuadrados concéntricos con rotación progresiva.
+     * Técnica: interpolación entre vértices para generar espirales de cuadrados.
+     *
+     * Partimos de un cuadrado y en cada iteración desplazamos cada vértice
+     * un porcentaje q hacia el siguiente vértice, creando un efecto de
+     * rotación y reducción escalonada.
+     */
+    drawSpiralingSquares(cx, cy, halfSide, iterations, q, color) {
+        const p = 1 - q;
+        // Vértices iniciales del cuadrado (en coordenadas lógicas)
+        let xA = cx - halfSide;
+        let yA = cy + halfSide; // Top-left
+        let xB = cx + halfSide;
+        let yB = cy + halfSide; // Top-right
+        let xC = cx + halfSide;
+        let yC = cy - halfSide; // Bottom-right
+        let xD = cx - halfSide;
+        let yD = cy - halfSide; // Bottom-left
+        this.graphics.strokeStyle = color;
+        for (let i = 0; i < iterations; i++) {
+            // Calcula el grosor de línea decreciente para efecto visual
+            const lineWidth = Math.max(0.5, 2.5 - i * (2.0 / iterations));
+            this.graphics.lineWidth = lineWidth;
+            // Dibuja el cuadrado actual
+            this.drawLine(this.iX(xA), this.iY(yA), this.iX(xB), this.iY(yB));
+            this.drawLine(this.iX(xB), this.iY(yB), this.iX(xC), this.iY(yC));
+            this.drawLine(this.iX(xC), this.iY(yC), this.iX(xD), this.iY(yD));
+            this.drawLine(this.iX(xD), this.iY(yD), this.iX(xA), this.iY(yA));
+            // Interpola para obtener el siguiente cuadrado (rotado y reducido)
+            const xA1 = p * xA + q * xB;
+            const yA1 = p * yA + q * yB;
+            const xB1 = p * xB + q * xC;
+            const yB1 = p * yB + q * yC;
+            const xC1 = p * xC + q * xD;
+            const yC1 = p * yC + q * yD;
+            const xD1 = p * xD + q * xA;
+            const yD1 = p * yD + q * yA;
+            xA = xA1;
+            yA = yA1;
+            xB = xB1;
+            yB = yB1;
+            xC = xC1;
+            yC = yC1;
+            xD = xD1;
+            yD = yD1;
         }
-    
-        /* for (let i = 0; i < 50; i++){
-            this.drawLine(xA, yA, xB, yB);
-            this.drawLine(xB, yB, xC, yC);
-            this.drawLine(xC, yC, xA, yA);
-            xA1 = p * xA + q * xB;
-            yA1 = p * yA + q * yB;
-            xB1 = p * xB + q * xC;
-            yB1 = p * yB + q * yC;
-            xC1 = p * xC + q * xA;
-            yC1 = p * yC + q * yA;
-            xA = xA1; xB = xB1; xC = xC1;
-            yA = yA1; yB = yB1; yC = yC1;
-        } */
+    }
+    paint() {
+        // --- Fondo degradado ---
+        const grad = this.graphics.createLinearGradient(0, 0, this.maxX, this.maxY);
+        grad.addColorStop(0, '#0f0c29');
+        grad.addColorStop(0.5, '#302b63');
+        grad.addColorStop(1, '#24243e');
+        this.graphics.fillStyle = grad;
+        this.graphics.fillRect(0, 0, this.maxX + 1, this.maxY + 1);
+        // --- Cuadrado central grande: espiral azul-cyan ---
+        this.drawSpiralingSquares(0, 0, 2.8, 40, 0.08, '#00d4ff');
+        // --- Cuadrado superior izquierdo: espiral dorada ---
+        this.drawSpiralingSquares(-1.8, 1.2, 0.9, 30, 0.1, '#ffd700');
+        // --- Cuadrado superior derecho: espiral magenta ---
+        this.drawSpiralingSquares(1.8, 1.2, 0.9, 30, 0.1, '#ff6ec7');
+        // --- Cuadrado inferior izquierdo: espiral verde ---
+        this.drawSpiralingSquares(-1.8, -1.2, 0.9, 30, 0.1, '#39ff14');
+        // --- Cuadrado inferior derecho: espiral naranja ---
+        this.drawSpiralingSquares(1.8, -1.2, 0.9, 30, 0.1, '#ff7c00');
+        // --- Texto decorativo ---
+        this.graphics.font = '14px monospace';
+        this.graphics.fillStyle = 'rgba(255,255,255,0.5)';
+        this.graphics.fillText('Ejercicio 1 – Cuadrados en espiral (interpolación)', 10, this.maxY - 10);
     }
 }

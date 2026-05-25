@@ -1,7 +1,184 @@
-#footer{
-    background: linear-gradient(0deg,#1c3643,#273b47 25%,#1e5372);
-  }
-  
-  #footer a{
-    color: #FFFFFF;
-  }
+/* =====================================================
+   GRAFICACIÓN – Ejercicio 1: Cuadrados en Espiral
+   Estilos globales y componentes de la UI
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+/* ---- Variables de diseño ---- */
+:root {
+  --bg-dark:     #0d0d1a;
+  --bg-card:     rgba(255, 255, 255, 0.05);
+  --accent-cyan: #00d4ff;
+  --accent-gold: #ffd700;
+  --text-main:   #e8eaf6;
+  --text-muted:  #9fa8da;
+  --border:      rgba(255, 255, 255, 0.12);
+  --radius:      16px;
+  --shadow:      0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ---- Reset y base ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* ---- Navbar ---- */
+#main-nav {
+  background: linear-gradient(90deg, #0f0c29, #302b63) !important;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  padding: 0.75rem 1.5rem;
+}
+
+.navbar-brand {
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  color: var(--accent-cyan) !important;
+}
+
+/* ---- Hero section ---- */
+.hero-section {
+  padding: 2.5rem 1rem 1rem;
+  background: radial-gradient(ellipse at top, rgba(0, 212, 255, 0.15) 0%, transparent 70%);
+}
+
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  font-weight: 300;
+}
+
+/* ---- Canvas Card ---- */
+.canvas-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.canvas-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.badge-algo {
+  font-size: 0.78rem;
+  color: var(--accent-cyan);
+  background: rgba(0, 212, 255, 0.12);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+.badge-lang {
+  font-size: 0.78rem;
+  color: var(--accent-gold);
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-weight: 600;
+}
+
+/* ---- Canvas wrapper ---- */
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  background: #060612;
+}
+
+canvas {
+  display: block;
+  border-radius: 8px;
+  max-width: 100%;
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.2), 0 0 80px rgba(48, 43, 99, 0.4);
+}
+
+/* ---- Canvas info ---- */
+.canvas-card-body {
+  padding: 1.5rem 1.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.card-info-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  margin-bottom: 0.5rem;
+}
+
+.card-info-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.card-info-text code {
+  background: rgba(0, 212, 255, 0.15);
+  color: var(--accent-cyan);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+/* ---- Legend ---- */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.legend-item {
+  font-size: 0.82rem;
+  color: var(--c);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  font-weight: 500;
+}
+
+/* ---- Footer ---- */
+#footer {
+  background: linear-gradient(0deg, #0f0c29, #1e1b4b 40%, #0f0c29);
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+#footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+#footer a:hover {
+  color: var(--accent-cyan);
+}
