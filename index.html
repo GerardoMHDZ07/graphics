@@ -1,103 +1,82 @@
 <!doctype html>
-<html class="no-js" lang="es">
+<html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Ejercicio 1 de Graficación: Cuadrados en espiral usando interpolación de vértices en TypeScript y Canvas API." />
-    <title>Graficación – Ejercicio 1: Cuadrados en Espiral</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+    <title>Foundation Starter Template</title>
+    <!-- Compressed CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" 
         rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style/index.css">
-  </head>
+    </head>
   <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark" id="main-nav">
-      <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="#">🎨 Graficación</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
-          aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Ejercicio 1</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
-                role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                About
-              </a>
-              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="https://github.com/jorrgeCruz/graphics">Repositorio Clase</a></li>
-                <li><a class="dropdown-item" href="#">Versión 1.0</a></li>
-                <li><a class="dropdown-item" href="#">Contacto</a></li>
-              </ul>
-            </li>
-          </ul>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Graficación</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Abrir</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Vizualizar</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Expand</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  About
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li><a class="dropdown-item" href="#">Development Team </a></li>
+                  <li><a class="dropdown-item" href="#">Version</a></li>
+                  <li><a class="dropdown-item" href="#">Contact</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="card text-center">
+        <div class="card-header">
+          Canvas de vizualizaion
+        </div>
+        <div class="chart card-img-bottom">
+            <canvas id="circlechart" width="640" height="480"></canvas>
+          </div>
+        <div class="card-body">
+          <h5 class="card-title">Ejercicio 1 - Cuadrados</h5>
+          <p class="card-text">Está es el área de dibujo disponible.</p>
+        </div>
+        
+        <div class="card-footer text-muted">
+          2 days ago
         </div>
       </div>
-    </nav>
 
-    <!-- Hero section -->
-    <section class="hero-section text-center">
-      <h1 class="hero-title">Ejercicio 1</h1>
-      <p class="hero-subtitle">Cuadrados en Espiral — Interpolación de Vértices</p>
-    </section>
-
-    <!-- Canvas card -->
-    <main class="container my-4">
-      <div class="canvas-card">
-        <div class="canvas-card-header">
-          <span class="badge-algo">Algoritmo: Interpolación lineal de vértices</span>
-          <span class="badge-lang">TypeScript + Canvas API</span>
-        </div>
-        <div class="canvas-wrapper">
-          <canvas id="circlechart" width="800" height="560"></canvas>
-        </div>
-        <div class="canvas-card-body">
-          <h2 class="card-info-title">¿Cómo funciona?</h2>
-          <p class="card-info-text">
-            Dado un cuadrado con vértices <strong>A, B, C, D</strong>, en cada iteración cada vértice
-            se desplaza un porcentaje <em>q</em> hacia el siguiente vértice. Esto produce una
-            rotación y reducción progresiva, generando el efecto de espiral. El parámetro
-            <code>q = 0.08</code> controla la velocidad de giro.
-          </p>
-          <div class="legend">
-            <span class="legend-item" style="--c:#00d4ff">● Cuadrado central</span>
-            <span class="legend-item" style="--c:#ffd700">● Superior izq.</span>
-            <span class="legend-item" style="--c:#ff6ec7">● Superior der.</span>
-            <span class="legend-item" style="--c:#39ff14">● Inferior izq.</span>
-            <span class="legend-item" style="--c:#ff7c00">● Inferior der.</span>
+      <footer id="footer" class="pb-4 pt-4">
+        <div class="container">
+          <div class="row text-center">
+            <div class="col-12 col-lg">
+              <a href="https://github.com/jorrgeCruz/graphics">Repositorio Principal </a>
+            </div>
+            <div class="col-12 col-lg">
+              <a href="#">Contáctanos</a>
+            </div>
+            <div class="col-12 col-lg">
+              <a href="#">Estudiantes</a>
+            </div>
           </div>
         </div>
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <footer id="footer" class="pb-4 pt-4">
-      <div class="container">
-        <div class="row text-center">
-          <div class="col-12 col-lg">
-            <a href="https://github.com/jorrgeCruz/graphics">Repositorio Principal</a>
-          </div>
-          <div class="col-12 col-lg">
-            <a href="#">Contáctanos</a>
-          </div>
-          <div class="col-12 col-lg">
-            <a href="#">Estudiantes</a>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+      </footer>
+     <!-- Compressed JavaScript -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" 
         integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
     </script>
     <script src="./dist/src/index.js" type="module"></script>
