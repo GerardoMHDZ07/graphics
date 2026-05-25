@@ -3,34 +3,53 @@ export class Grapher extends CanvasLocal {
     constructor(g, canvas) {
         super(g, canvas);
     }
-    // Zoom: cambia el rango y recalcula pixelSize
-    setZoom(factor) {
-        this.rWidth = 6 * factor;
-        this.rHeight = 4 * factor;
+    // Rango visible del canvas
+    xMin() { return -this.rWidth / 2; }
+    xMax() { return this.rWidth / 2; }
+    yMin() { return -this.rHeight / 2; }
+    yMax() { return this.rHeight / 2; }
+    // Acercar / alejar
+    zoomIn() { this.rWidth *= 0.7; this.rHeight *= 0.7; this.recalc(); }
+    zoomOut() { this.rWidth /= 0.7; this.rHeight /= 0.7; this.recalc(); }
+    resetZoom() { this.rWidth = 6; this.rHeight = 4; this.recalc(); }
+    recalc() {
         this.pixelSize = Math.max(this.rWidth / this.maxX, this.rHeight / this.maxY);
     }
-    // Dibuja los ejes con marcas y etiquetas
+    // Fondo blanco
+    clear() {
+        this.graphics.fillStyle = 'white';
+        this.graphics.fillRect(0, 0, this.maxX + 1, this.maxY + 1);
+    }
+    // Ejes X e Y con marcas
     drawAxes() {
-        this.graphics.strokeStyle = 'black';
-        this.graphics.lineWidth = 1;
+        this.graphics.strokeStyle = '#333333';
+        this.graphics.lineWidth = 1.5;
         // Eje X
-        this.drawLine(this.iX(-3), this.iY(0), this.iX(3), this.iY(0));
+        this.drawLine(0, this.iY(0), this.maxX, this.iY(0));
         // Eje Y
-        this.drawLine(this.iX(0), this.iY(2), this.iX(0), this.iY(-2));
-        // Marcas y numeros en X
-        for (let x = -3; x <= 3; x++) {
-            this.drawLine(this.iX(x), this.iY(-0.1), this.iX(x), this.iY(0.1));
-            this.graphics.strokeText(x + '', this.iX(x) - 4, this.iY(-0.3));
+        this.drawLine(this.iX(0), 0, this.iX(0), this.maxY);
+        // Marcas en X
+        this.graphics.fillStyle = '#333333';
+        this.graphics.font = '11px sans-serif';
+        for (let x = Math.ceil(this.xMin()); x <= Math.floor(this.xMax()); x++) {
+            this.drawLine(this.iX(x), this.iY(0) - 5, this.iX(x), this.iY(0) + 5);
+            if (x !== 0) {
+                this.graphics.fillText(String(x), this.iX(x) - 5, this.iY(0) + 18);
+            }
         }
         // Marcas en Y
-        for (let y = -2; y <= 2; y++) {
-            this.drawLine(this.iX(-0.1), this.iY(y), this.iX(0.1), this.iY(y));
+        for (let y = Math.ceil(this.yMin()); y <= Math.floor(this.yMax()); y++) {
+            this.drawLine(this.iX(0) - 5, this.iY(y), this.iX(0) + 5, this.iY(y));
+            if (y !== 0) {
+                this.graphics.fillText(String(y), this.iX(0) + 8, this.iY(y) + 4);
+            }
         }
-        // Etiquetas de ejes
-        this.graphics.strokeText('X', this.iX(2.9), this.iY(0.2));
-        this.graphics.strokeText('Y', this.iX(0.15), this.iY(1.9));
+        // Letras de ejes
+        this.graphics.fillStyle = '#333333';
+        this.graphics.fillText('x', this.maxX - 12, this.iY(0) - 8);
+        this.graphics.fillText('y', this.iX(0) + 8, 12);
     }
-    // La funcion matematica segun el tipo seleccionado
+    // Evalua la funcion en x segun el tipo
     fx(x, tipo) {
         if (tipo === 'sin')
             return Math.sin(x);
@@ -44,23 +63,35 @@ export class Grapher extends CanvasLocal {
             return x;
         return 0;
     }
-    // Traza la funcion en rojo
-    plotFunction(tipo) {
+    // Traza la funcion
+    trazarFuncion(tipo) {
         this.graphics.strokeStyle = 'red';
         this.graphics.lineWidth = 2;
-        const paso = 0.05;
-        for (let x = -3; x <= 3 - paso; x += paso) {
-            const y1 = this.fx(x, tipo);
-            const y2 = this.fx(x + paso, tipo);
-            if (isFinite(y1) && isFinite(y2)) {
-                this.drawLine(this.iX(x), this.iY(y1), this.iX(x + paso), this.iY(y2));
+        const paso = (this.xMax() - this.xMin()) / 500; // 500 segmentos
+        this.graphics.beginPath();
+        let primero = true;
+        for (let x = this.xMin(); x <= this.xMax(); x += paso) {
+            const y = this.fx(x, tipo);
+            if (!isFinite(y) || isNaN(y)) {
+                primero = true;
+                continue;
+            }
+            const px = this.iX(x);
+            const py = this.iY(y);
+            if (primero) {
+                this.graphics.moveTo(px, py);
+                primero = false;
+            }
+            else {
+                this.graphics.lineTo(px, py);
             }
         }
+        this.graphics.stroke();
     }
-    // Dibuja todo: limpia, ejes y funcion
+    // Punto de entrada: limpia y dibuja todo
     draw(tipo) {
-        this.graphics.clearRect(0, 0, this.maxX + 1, this.maxY + 1);
+        this.clear();
         this.drawAxes();
-        this.plotFunction(tipo);
+        this.trazarFuncion(tipo);
     }
 }
